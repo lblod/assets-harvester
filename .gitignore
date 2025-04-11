@@ -6,3 +6,7 @@
 !/data/db/toLoad/*
 
 docker-compose.override.yml
+/config/migrations/local/*.sparql
+/config/migrations/local/*.ttl
+/config/migrations/local/*.graph
+.env

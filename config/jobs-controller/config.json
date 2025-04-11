@@ -1,0 +1,11 @@
+{
+    "http://lblod.data.gift/id/jobs/concept/JobOperation/cveHarvesting": {
+        "tasksConfiguration": [
+            {
+                "currentOperation": null,
+                "nextOperation": "http://lblod.data.gift/id/jobs/concept/TaskOperation/scanCVE",
+                "nextIndex": "0"
+            }
+        ]
+    }
+}

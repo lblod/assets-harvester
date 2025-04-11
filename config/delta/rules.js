@@ -1,17 +1,56 @@
 export default [
-  {
-    match: {
-      subject: {},
+    {
+        match: {
+            subject: {},
+        },
+        callback: {
+            url: "http://resource/.mu/delta",
+            method: "POST",
+        },
+        options: {
+            resourceFormat: "v0.0.1",
+            gracePeriod: 1000,
+            foldEffectiveChanges: true,
+            ignoreFromSelf: true,
+        },
     },
-    callback: {
-      url: "http://resource/.mu/delta",
-      method: "POST",
+    {
+        match: {
+            predicate: {
+                type: 'uri',
+                value: 'http://www.w3.org/ns/adms#status'
+            }
+        },
+        callback: {
+            method: 'POST',
+            url: 'http://jobs-controller/delta'
+        },
+        options: {
+            resourceFormat: 'v0.0.1',
+            gracePeriod: 1000,
+            ignoreFromSelf: true
+        }
     },
-    options: {
-      resourceFormat: "v0.0.1",
-      gracePeriod: 1000,
-      foldEffectiveChanges: true,
-      ignoreFromSelf: true,
+    {
+        match: {
+            predicate: {
+                type: "uri",
+                value: "http://www.w3.org/ns/adms#status",
+            },
+            object: {
+                type: "uri",
+                value: "http://redpencil.data.gift/id/concept/JobStatus/scheduled",
+            },
+        },
+        callback: {
+            method: "POST",
+            url: "http://cve-scanner-service/delta",
+        },
+        options: {
+            resourceFormat: "v0.0.1",
+            gracePeriod: 1000,
+            ignoreFromSelf: true,
+            foldEffectiveChanges: true
+        },
     },
-  }
 ];

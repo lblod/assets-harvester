@@ -1,87 +1,123 @@
+
 ;;;;;;;;;;;;;;;;;;;
 ;;; delta messenger
 (in-package :delta-messenger)
 
-;; (push (make-instance 'delta-logging-handler) *delta-handlers*) ;; enable if delta messages should be logged on terminal
+(setf *delta-handlers* nil)
+;; (add-delta-logger)
 (add-delta-messenger "http://delta-notifier/")
-(setf *log-delta-messenger-message-bus-processing* nil) ;; set to t for extra messages for debugging delta messenger
 
 ;;;;;;;;;;;;;;;;;
 ;;; configuration
 (in-package :client)
-(setf *log-sparql-query-roundtrip* nil) ; change nil to t for logging requests to virtuoso (and the response)
+(setf *log-sparql-query-roundtrip* t)
 (setf *backend* "http://triplestore:8890/sparql")
 
 (in-package :server)
-(setf *log-incoming-requests-p* nil) ; change nil to t for logging all incoming requests
+(setf *log-incoming-requests-p* t)
 
-;;;;;;;;;;;;;;;;
-;;; prefix types
-(in-package :type-cache)
-
-(add-type-for-prefix "http://mu.semte.ch/sessions/" "http://mu.semte.ch/vocabularies/session/Session") ; each session URI will be handled for updates as if it had this mussession:Session type
 
 ;;;;;;;;;;;;;;;;;
 ;;; access rights
 
 (in-package :acl)
 
-;; these three reset the configuration, they are likely not necessary
-(defparameter *access-specifications* nil)
-(defparameter *graphs* nil)
-(defparameter *rights* nil)
+(defparameter *access-specifications* nil
+  "All known ACCESS specifications.")
 
-;; Prefixes used in the constraints below (not in the SPARQL queries)
+(defparameter *graphs* nil
+  "All known GRAPH-SPECIFICATION instances.")
+
+(defparameter *rights* nil
+  "All known GRANT instances connecting ACCESS-SPECIFICATION to GRAPH.")
+
 (define-prefixes
-  ;; Core
-  :mu "http://mu.semte.ch/vocabularies/core/"
-  :session "http://mu.semte.ch/vocabularies/session/"
-  :ext "http://mu.semte.ch/vocabularies/ext/"
-  ;; Custom prefix URIs here, prefix casing is ignored
-  )
+  :besluit "http://data.vlaanderen.be/ns/besluit#"
+  :cogs "http://vocab.deri.ie/cogs#"
+  :core "http://open-services.net/ns/core#"
+  :skos "http://www.w3.org/2004/02/skos/core#"
+  :dcat "http://www.w3.org/ns/dcat#"
+  :dct "http://purl.org/dc/terms/"
+  :eli "http://data.europa.eu/eli/ontology#"
+  :foaf "http://xmlns.com/foaf/0.1/"
+  :generiek "https://data.vlaanderen.be/ns/generiek#"
+  :harvesting "http://lblod.data.gift/vocabularies/harvesting/"
+  :mandaat "http://data.vlaanderen.be/ns/mandaat#"
+  :ndo "http://oscaf.sourceforge.net/ndo.html#"
+  :nfo "http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#"
+  :person "http://www.w3.org/ns/person#"
+  :schema "http://schema.org/"
+  :security "http://lblod.data.gift/vocabularies/security/"
+  :tasks "http://redpencil.data.gift/vocabularies/tasks/"
+  :wot "https://www.w3.org/2019/wot/security#")
 
+(define-graph harvesting ("http://mu.semte.ch/graphs/harvesting")
+  ("tasks:Task" -> _ )
+  ("cogs:Job" -> _ )
+  ("cogs:ScheduledJob" -> _ )
+  ("tasks:ScheduledTask" -> _ )
+  ("tasks:CronSchedule" -> _ )
+  ("schema:repeatFrequency" -> _ )
+  ("core:Error" -> _ )
+  ("harvesting:HarvestingCollection" -> _ )
+  ("nfo:RemoteDataObject" -> _ )
+  ("nfo:FileDataObject" -> _ )
+  ("nfo:DataContainer" -> _ )
+  ("ndo:DownloadEvent" -> _ )
+  ("dcat:Dataset" -> _ )
+  ("dcat:Distribution" -> _ )
+  ("dcat:Catalog" -> _ )
+  ("security:AuthenticationConfiguration" -> _ )
+  ("security:Credentials" -> _ )
+  ("security:BasicAuthenticationCredentials" -> _ )
+  ("security:OAuth2Credentials" -> _ )
+  ("wot:SecurityScheme" -> _ )
+  ("wot:BasicSecurityScheme" -> _ )
+  ("wot:OAuth2SecurityScheme" -> _ ))
 
-;;;;;;;;;
-;; Graphs
-;;
-;; These are the graph specifications known in the system.  No
-;; guarantees are given as to what content is readable from a graph.  If
-;; two graphs are nearly identitacl and have the same name, perhaps the
-;; specifications can be folded too.  This could help when building
-;; indexes.
+(define-graph harvesting-public ("http://mu.semte.ch/graphs/harvesting")
+  ("nfo:RemoteDataObject" -> _)
+  ("nfo:FileDataObject" -> _))
 
 (define-graph public ("http://mu.semte.ch/graphs/public")
-  (_ -> _)) ; public allows ANY TYPE -> ANY PREDICATE in the direction
-            ; of the arrow
-
-;; Example:
-;; (define-graph company ("http://mu.semte.ch/graphs/companies/")
-;;   ("foaf:OnlineAccount"
-;;    -> "foaf:accountName"
-;;    -> "foaf:accountServiceHomepage")
-;;   ("foaf:Group"
-;;    -> "foaf:name"
-;;    -> "foaf:member"))
-
-
-;;;;;;;;;;;;;
-;; User roles
+  ("besluit:Besluit" -> _)
+  ("besluit:Zitting" -> _)
+  ("besluit:Bestuursorgaan" -> _)
+  ("foaf:Document" -> _)
+  ("besluit:Agendapunt" -> _)
+  ("skos:Concept" -> _)
+  ("dct:Agent" -> _)
+  ("besluit:Artikel" -> _)
+  ("besluit:BehandelingVanAgendapunt" -> _)
+  ("besluit:Bestuurseenheid" -> _)
+  ("generiek:DocumentOnderdeel" -> _)
+  ("eli:LegalExpression" -> _)
+  ("mandaat:Mandataris" -> _)
+  ("eli:LegalResource" -> _)
+  ("eli:LegalResourceSubdivision" -> _)
+  ("besluit:Stemming" -> _)
+  ("besluit:Vergaderactiviteit" -> _)
+  ("mandaat:Mandaat" -> _)
+  ("person:Person" -> _))
 
 (supply-allowed-group "public")
 
+(grant (read)
+       :to public
+       :for "public")
+
+(grant (read)
+       :to harvesting-public
+       :for "public")
+
+(supply-allowed-group "logged-in"
+  :query "PREFIX session: <http://mu.semte.ch/vocabularies/session/>
+      SELECT DISTINCT ?account WHERE {
+      <SESSION_ID> session:account ?account.
+      }")
+
 (grant (read write)
-       :to-graph public
-       :for-allowed-group "public")
-
-;; example:
-
-;; (supply-allowed-group "company"
-;;   :query "PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
-;;           SELECT DISTINCT ?uuid WHERE {
-;;             <SESSION_ID ext:belongsToCompany/mu:uuid ?uuid
-;;           }"
-;;   :parameters ("uuid"))
-
-;; (grant (read write)
-;;        :to company
-;;        :for "company")
+       :to harvesting
+       :for "logged-in")
+;; increase the default read timeout. this allows waiting heavier queries (like the one for delta files)
+(setf dexador.util:*default-read-timeout* 60)

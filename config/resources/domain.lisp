@@ -9,18 +9,13 @@
 (setf sparql:*query-log-types* nil) ;; hint: use app-http-logger for logging queries instead, all is '(:default :update-group :update :query :ask)
 
 
-;; example
-;; (define-resource dataset ()
-;;   :class (s-prefix "dcat:Dataset")
-;;   :properties `((:title :string ,(s-prefix "dct:title"))
-;;                 (:description :string ,(s-prefix "dct:description")))
-;;   :has-one `((catalog :via ,(s-prefix "dcat:dataset")
-;;                       :inverse t
-;;                       :as "catalog"))
-;;   :has-many `((theme :via ,(s-prefix "dcat:theme")
-;;                      :as "themes"))
-;;   :resource-base (s-url "http://webcat.tmp.semte.ch/datasets/")
-;;   :on-path "datasets")
+; use xsd:boolean instead of custom datatype
+(defparameter *use-custom-boolean-type-p* nil)
 
-;; reading in the domain.json
+(read-domain-file "auth.json")
+(read-domain-file "file.json")
+(read-domain-file "job.json")
+(read-domain-file "log.json")
+(read-domain-file "report.json")
+(read-domain-file "harvest.json")
 (read-domain-file "domain.json")
