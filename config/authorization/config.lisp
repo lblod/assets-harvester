@@ -116,8 +116,16 @@
       <SESSION_ID> session:account ?account.
       }")
 
-(grant (read write)
-       :to harvesting
-       :for "logged-in")
+
+(with-scope "http://services.redpencil.io/cve-service"
+    (grant (read write)
+      :to harvesting
+      :for "public"))
+
+(with-scope "http://services.redpencil.io/cve-service"
+    (grant (read write)
+      :to public
+      :for "public"))
+
 ;; increase the default read timeout. this allows waiting heavier queries (like the one for delta files)
 (setf dexador.util:*default-read-timeout* 60)

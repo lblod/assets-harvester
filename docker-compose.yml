@@ -75,7 +75,7 @@ services:
       - "logging=true"
     logging: *default-logging
   cve-scanner-service:
-    image: lblod/harvesting-scanning-cve-service
+    image: lblod/harvesting-scanning-cve-service:feature-scoped-query
     links:
       - database:database
     ports:
@@ -109,7 +109,7 @@ services:
     logging: *default-logging
 
   jobs-controller:
-    image: lblod/job-controller-service
+    image: lblod/job-controller-service:1.1.0
     volumes:
       - ./config/jobs-controller/:/config/
     labels:
