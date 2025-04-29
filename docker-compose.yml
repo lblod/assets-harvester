@@ -83,6 +83,8 @@ services:
       - "9229:9229"
     environment:
       HIGH_LOAD_DATABASE_ENDPOINT: "http://triplestore:8890/sparql"
+    labels:
+      - "logging=true"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
   frontend-dashboard:
