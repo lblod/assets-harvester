@@ -46,10 +46,13 @@
   :ndo "http://oscaf.sourceforge.net/ndo.html#"
   :nfo "http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#"
   :person "http://www.w3.org/ns/person#"
+  :ext "http://mu.semte.ch/vocabularies/ext/"
   :schema "http://schema.org/"
   :security "http://lblod.data.gift/vocabularies/security/"
   :tasks "http://redpencil.data.gift/vocabularies/tasks/"
-  :wot "https://www.w3.org/2019/wot/security#")
+  :wot "https://www.w3.org/2019/wot/security#"
+  :defend "https://d3fend.mitre.org/ontologies/d3fend#"
+  )
 
 (define-graph harvesting ("http://mu.semte.ch/graphs/harvesting")
   ("tasks:Task" -> _ )
@@ -80,6 +83,10 @@
   ("nfo:FileDataObject" -> _))
 
 (define-graph public ("http://mu.semte.ch/graphs/public")
+  ("defend:Vulnerability" -> _ )
+  ("defend:SystemVulnerabilityAssessment" -> _ )
+  ("defend:AssetVulnerabilityEnumeration" -> _ )
+  ("ext:CVSS" -> _ )
   ("besluit:Besluit" -> _)
   ("besluit:Zitting" -> _)
   ("besluit:Bestuursorgaan" -> _)
@@ -129,3 +136,6 @@
 
 ;; increase the default read timeout. this allows waiting heavier queries (like the one for delta files)
 (setf dexador.util:*default-read-timeout* 60)
+
+
+

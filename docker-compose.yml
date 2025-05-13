@@ -78,11 +78,6 @@ services:
     image: lblod/harvesting-scanning-cve-service:feature-scoped-query
     links:
       - database:database
-    ports:
-      - "8888:80"
-      - "9229:9229"
-    environment:
-      HIGH_LOAD_DATABASE_ENDPOINT: "http://triplestore:8890/sparql"
     labels:
       - "logging=true"
     volumes:
