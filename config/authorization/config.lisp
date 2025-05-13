@@ -87,6 +87,7 @@
   ("defend:SystemVulnerabilityAssessment" -> _ )
   ("defend:AssetVulnerabilityEnumeration" -> _ )
   ("ext:CVSS" -> _ )
+  ("ext:GitRepository" -> _ )
   ("besluit:Besluit" -> _)
   ("besluit:Zitting" -> _)
   ("besluit:Bestuursorgaan" -> _)
@@ -134,6 +135,16 @@
       :to public
       :for "public"))
 
+
+(with-scope "http://services.redpencil.io/harvesting-git-service"
+    (grant (read write)
+      :to harvesting
+      :for "public"))
+
+(with-scope "http://services.redpencil.io/harvesting-git-service"
+    (grant (read write)
+      :to public
+      :for "public"))
 ;; increase the default read timeout. this allows waiting heavier queries (like the one for delta files)
 (setf dexador.util:*default-read-timeout* 60)
 

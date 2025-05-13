@@ -75,7 +75,7 @@ services:
       - "logging=true"
     logging: *default-logging
   cve-scanner-service:
-    image: lblod/harvesting-scanning-cve-service:feature-scoped-query
+    image: lblod/harvesting-scanning-cve-service
     links:
       - database:database
     labels:
