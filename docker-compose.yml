@@ -78,13 +78,17 @@ services:
     image: lblod/harvesting-scanning-cve-service
     links:
       - database:database
-    ports:
-      - "8888:80"
-      - "9229:9229"
-    environment:
-      HIGH_LOAD_DATABASE_ENDPOINT: "http://triplestore:8890/sparql"
+    labels:
+      - "logging=true"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+  git-repo-service:
+    image: lblod/harvesting-git-repositories-service
+    links:
+      - database:database
+    labels:
+      - "logging=true"
+    restart: always
   frontend-dashboard:
     image: lblod/frontend-dashboard:1.7.0
     labels:
@@ -109,7 +113,7 @@ services:
     logging: *default-logging
 
   jobs-controller:
-    image: lblod/job-controller-service
+    image: lblod/job-controller-service:1.1.0
     volumes:
       - ./config/jobs-controller/:/config/
     labels:

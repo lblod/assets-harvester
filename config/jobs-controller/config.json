@@ -7,5 +7,14 @@
                 "nextIndex": "0"
             }
         ]
+    },
+    "http://lblod.data.gift/id/jobs/concept/JobOperation/harvestGitOrg": {
+        "tasksConfiguration": [
+            {
+                "currentOperation": null,
+                "nextOperation": "http://lblod.data.gift/id/jobs/concept/TaskOperation/harvestRepositories",
+                "nextIndex": "0"
+            }
+        ]
     }
 }
