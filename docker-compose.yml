@@ -82,6 +82,13 @@ services:
       - "logging=true"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+  git-repo-service:
+    image: lblod/harvesting-git-repositories-service
+    links:
+      - database:database
+    labels:
+      - "logging=true"
+    restart: always
   frontend-dashboard:
     image: lblod/frontend-dashboard:1.7.0
     labels:
